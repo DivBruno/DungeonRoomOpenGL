@@ -130,7 +130,8 @@ GLuint indices[] = {
 
 
 // OBJECTS VERTICES AND INDICES
-// FLOOR
+
+//      FLOOR
 Vertex vertices_floor[] = {
     //                      COORDS                          NORMALS                         COLORS               UV (text pos)
     Vertex{glm::vec3(-1.0f,  0.0f,  1.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec2( 0.0f,  0.0f)},
@@ -145,7 +146,7 @@ GLuint indices_floor[] = {
 };
 
 
-// WALL
+//      WALL
 Vertex vertices_wall[] = {
     //                      COORDS                          NORMALS                         COLORS               UV (text pos)
     Vertex{glm::vec3(-1.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec2( 0.0f,  0.0f)},
@@ -160,18 +161,15 @@ GLuint indices_wall[] = {
 };
 
 
-
-
-// RUG 
-
+//      RUG 
 
 
 
-// BOOKSHELF
+//      BOOKSHELF
 
 
 
-
+//      LIGHT
 Vertex light_vertices[] = {
     Vertex{glm::vec3(-0.1f, -0.1f,  0.1f)},
     Vertex{glm::vec3(-0.1f, -0.1f, -0.1f)},
@@ -182,7 +180,6 @@ Vertex light_vertices[] = {
     Vertex{glm::vec3( 0.1f,  0.1f, -0.1f)},
     Vertex{glm::vec3( 0.1f,  0.1f,  0.1f)}
 };
-
 
 GLuint light_indices[] =
 {
@@ -202,16 +199,17 @@ GLuint light_indices[] =
 
 
 
-void Set_version_profile(int major, int minor){
+
+void Set_version(int major, int minor){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 }
 
+
 int main(){
     glfwInit();
-
-    Set_version_profile(3, 3);
+    Set_version(3, 3);
 
     GLFWwindow *window = glfwCreateWindow(w, h, "OpenGL", NULL, NULL);
     if (window == NULL){
@@ -310,10 +308,13 @@ int main(){
     // Camera attributes
     Camera camera (w, h, glm::vec3(0.0f, 1.0f, 2.0f));
 
+
     // "World" colors
     float r = 2, g = 50, b = 77, a = 1, rgb_code = 256;
 
+
     float last_time = glfwGetTime();
+
     while (!glfwWindowShouldClose(window)){
         glClearColor(r/rgb_code, g/rgb_code, b/rgb_code, a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -322,6 +323,7 @@ int main(){
         if (camera.Position.x > 10.0f || camera.Position.y > 10.0f || camera.Position.z > 10.0f){
             camera.Position = glm::vec3(0.0f, 1.0f, 2.0f);
         }
+
 
         // Just to fix FPS speeding up issues
         float current_time = glfwGetTime();
@@ -347,10 +349,11 @@ int main(){
         glfwPollEvents();
     }
 
+
     shader_program.Delete();
     light_shader.Delete();
-
     glfwDestroyWindow(window);
     glfwTerminate();
+    
     return 0;
 }
