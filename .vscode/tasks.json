@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build and Run OpenGL",
+      "type": "shell",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "C:\\msys64\\ucrt64\\bin\\g++.exe include/glm/glm.hpp src/tiny_obj_loader.cpp src/aula14/main.cpp src/Mesh.cpp src/Camera.cpp src/Texture.cpp src/stb.cpp src/VAO.cpp src/VBO.cpp src/EBO.cpp src/shader_class.cpp src/glad.c -std=c++17 -Iinclude -Llib -lglfw3dll -lopengl32 -lassimp -o src/output/main.exe && src\\output\\main.exe"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
