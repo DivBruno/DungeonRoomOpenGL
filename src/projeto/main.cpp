@@ -1,8 +1,60 @@
 #include "Mesh.h"
+#include "tiny_obj_loader.h"
+
+Mesh LoadOBJ(const std::string& path) {
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+    std::string warn, err;
+
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str());
+    if (!warn.empty()) std::cout << "WARN: " << warn << std::endl;
+    if (!err.empty()) std::cerr << "ERR: " << err << std::endl;
+    if (!ret) throw std::runtime_error("Failed to load OBJ");
+
+    std::vector<Vertex> vertices;
+    std::vector<GLuint> indices;
+
+    for (const auto& shape : shapes) {
+        for (const auto& index : shape.mesh.indices) {
+            Vertex vertex{};
+            vertex.position = {
+                attrib.vertices[3 * index.vertex_index + 0],
+                attrib.vertices[3 * index.vertex_index + 1],
+                attrib.vertices[3 * index.vertex_index + 2]
+            };
+
+            if (!attrib.normals.empty())
+                vertex.normal = {
+                    attrib.normals[3 * index.normal_index + 0],
+                    attrib.normals[3 * index.normal_index + 1],
+                    attrib.normals[3 * index.normal_index + 2]
+                };
+            else
+                vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+
+            if (!attrib.texcoords.empty())
+                vertex.texUV = {
+                    attrib.texcoords[2 * index.texcoord_index + 0],
+                    attrib.texcoords[2 * index.texcoord_index + 1]
+                };
+            else
+                vertex.texUV = glm::vec2(0.0f, 0.0f);
+
+            vertex.color = glm::vec3(1.0f, 1.0f, 1.0f); // branco
+            vertices.push_back(vertex);
+            indices.push_back(indices.size());
+        }
+    }
+
+    std::vector<Texture> empty_textures;
+    return Mesh(vertices, indices, empty_textures);
+}
 
 // Window res
 const unsigned int w = 1080;
 const unsigned int h = 720;
+
 
 // CUBE, old organization
 /*
@@ -60,6 +112,7 @@ GLuint indices[] = {
     22, 23, 20, // top left triang
 };
 */
+
 
 // SQUARE
 Vertex vertices[] = {
@@ -148,6 +201,23 @@ int main(){
     std::vector <GLuint> light_inds(light_indices, light_indices + sizeof(light_indices) / sizeof(GLuint));
     Mesh light(light_verts, light_inds, texs);
 
+    // Aq tu muda a textura
+    std::vector<Texture> modelTextures{
+        Texture("resource/textures/planks.png",
+                "diffuse",
+                0,
+                GL_RGBA,
+                GL_UNSIGNED_BYTE)
+    };
+
+    Mesh myModel = LoadOBJ("resource/models/girl.obj");
+    myModel.textures = modelTextures;
+
+    glm::vec3 model_pos = glm::vec3(10.0f, 0.0f, -1.0f);
+    glm::mat4 model_matrix = glm::mat4(1.0f);
+    model_matrix = glm::translate(model_matrix, model_pos);
+
+
 
     glm::vec4 light_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     glm::vec3 light_pos = glm::vec3(0.8f, 0.8f, 0.8f);
@@ -166,8 +236,6 @@ int main(){
     glUniformMatrix4fv(glGetUniformLocation(shader_program.ID, "model"), 1, GL_FALSE, glm::value_ptr(cube_model));
     glUniform4f(glGetUniformLocation(shader_program.ID, "light_color"), light_color.x, light_color.y, light_color.z, light_color.w);
     glUniform3f(glGetUniformLocation(shader_program.ID, "light_pos"), light_pos.x, light_pos.y, light_pos.z);
-
-
 
     glEnable(GL_DEPTH_TEST);
 
@@ -188,9 +256,24 @@ int main(){
         camera.Inputs(window, delta_time);
         camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
+        // ---- MODELO ----
+        shader_program.Activate();
+        glUniformMatrix4fv(
+            glGetUniformLocation(shader_program.ID, "model"),
+                                1, GL_FALSE, glm::value_ptr(model_matrix)
+        );
+        myModel.Draw(shader_program, camera);
+
+        // ---- CHÃO ----
+        glUniformMatrix4fv(
+            glGetUniformLocation(shader_program.ID, "model"),
+                                1, GL_FALSE, glm::value_ptr(cube_model) // matriz original do chão
+        );
         floor.Draw(shader_program, camera);
-        light.Draw(light_shader, camera);       
-    
+
+        // ---- LUZ ----
+        light.Draw(light_shader, camera);     
+            
 
         glfwSwapBuffers(window);
         glfwPollEvents();
