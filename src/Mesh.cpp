@@ -19,6 +19,25 @@ Mesh::Mesh(std::vector <Vertex> &vertices, std::vector <GLuint> &indices, std::v
     VBO.Unbind();
     EBO.Unbind();
 }
+Mesh::Mesh(std::vector <Vertex> &vertices, std::vector <GLuint> &indices){
+    Mesh::vertices = vertices;
+    Mesh::indices = indices;
+    Mesh::textures.clear();
+
+    VAO.Bind();
+
+    VBO VBO(vertices);
+    EBO EBO(indices);
+
+    VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*) 0);
+    VAO.LinkAttrib(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+    VAO.LinkAttrib(VBO, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
+    VAO.LinkAttrib(VBO, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));
+
+    VAO.Unbind();
+    VBO.Unbind();
+    EBO.Unbind();
+}
 
 void  Mesh::Draw(Shader &shader, Camera &camera){
     shader.Activate();
@@ -47,3 +66,8 @@ void  Mesh::Draw(Shader &shader, Camera &camera){
     glDrawElements(GL_TRIANGLES,  indices.size(), GL_UNSIGNED_INT, 0);
 
 }
+
+void Mesh::Draw_mesh(const glm::mat4 &model, Shader &shader, Camera &camera) {
+    glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+    Draw(shader, camera);
+} 

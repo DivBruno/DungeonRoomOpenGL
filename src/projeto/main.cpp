@@ -1,16 +1,31 @@
 #include "Mesh.h"
 #include "tiny_obj_loader.h"
 
+template <size_t v, size_t i,  size_t t>
+
+Mesh create_object(Vertex (&vertices)[v], GLuint (&indices)[i], Texture (&texture)[t]){
+    std::vector <Vertex> verts(vertices, vertices + v);
+    std::vector <GLuint> inds(indices, indices + i);
+    std::vector <Texture> texs(texture, texture + t);
+
+    Mesh mesh(verts, inds, texs);   
+    return mesh;
+}   
+
+
 Mesh LoadOBJ(const std::string& path) {
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
     std::string warn, err;
 
-    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str());
-    if (!warn.empty()) std::cout << "WARN: " << warn << std::endl;
-    if (!err.empty()) std::cerr << "ERR: " << err << std::endl;
-    if (!ret) throw std::runtime_error("Failed to load OBJ");
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str(), nullptr, true);
+    if (!warn.empty() && warn.find("Material") == std::string::npos)
+        std::cout << "WARN: " << warn << std::endl;
+    if (!err.empty())
+        std::cerr << "ERR: " << err << std::endl;
+    if (!ret)
+        throw std::runtime_error("Failed to load OBJ");
 
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
@@ -47,9 +62,9 @@ Mesh LoadOBJ(const std::string& path) {
         }
     }
 
-    std::vector<Texture> empty_textures;
-    return Mesh(vertices, indices, empty_textures);
+    return Mesh(vertices, indices);
 }
+
 
 // Window res
 const unsigned int w = 1080;
@@ -114,8 +129,9 @@ GLuint indices[] = {
 */
 
 
-// SQUARE
-Vertex vertices[] = {
+// OBJECTS VERTICES AND INDICES
+// FLOOR
+Vertex vertices_floor[] = {
     //                      COORDS                          NORMALS                         COLORS               UV (text pos)
     Vertex{glm::vec3(-1.0f,  0.0f,  1.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec2( 0.0f,  0.0f)},
     Vertex{glm::vec3(-1.0f,  0.0f, -1.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec2( 0.0f,  1.0f)},
@@ -123,11 +139,37 @@ Vertex vertices[] = {
     Vertex{glm::vec3( 1.0f,  0.0f,  1.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec2( 1.0f,  0.0f)}
 };
 
-
-GLuint indices[] = {
+GLuint indices_floor[] = {
     0, 1, 2,
     0, 2, 3
 };
+
+
+// WALL
+Vertex vertices_wall[] = {
+    //                      COORDS                          NORMALS                         COLORS               UV (text pos)
+    Vertex{glm::vec3(-1.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec2( 0.0f,  0.0f)},
+    Vertex{glm::vec3(-1.0f,  -1.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec2( 0.0f,  1.0f)},
+    Vertex{glm::vec3( 1.0f,  -1.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec2( 1.0f,  1.0f)},
+    Vertex{glm::vec3( 1.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec2( 1.0f,  0.0f)}
+};
+
+GLuint indices_wall[] = {
+    0, 1, 2,
+    0, 2, 3
+};
+
+
+
+
+// RUG 
+
+
+
+
+// BOOKSHELF
+
+
 
 
 Vertex light_vertices[] = {
@@ -182,97 +224,123 @@ int main(){
     gladLoadGL();
     glViewport(0, 0, w, h);
 
-    Texture textures[]{
-        Texture ("resource/textures/planks.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
-        Texture ("resource/textures/planksSpec.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE)
+
+
+    //  SHADERS
+    Shader shader_program("resource/shaders/default.vert", "resource/shaders/default.frag");
+    Shader light_shader("resource/shaders/light.vert", "resource/shaders/light.frag");
+
+
+
+    //  OBJECTS
+
+    //      FLOOR
+    Texture textures_floor[]{
+        Texture ("resource/textures/plank.jpg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
+        Texture ("resource/textures/plank.jpg", "specular", 1, GL_RED, GL_UNSIGNED_BYTE)
     };
+    Mesh floor = create_object(vertices_floor, indices_floor, textures_floor);
 
 
-    Shader shader_program("resource/shaders/default.vert", 
-                          "resource/shaders/default.frag");
-    std::vector <Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
-    std::vector <GLuint> inds(indices, indices + sizeof(indices) /  sizeof(GLuint));
-    std::vector <Texture> texs(textures, textures + sizeof(textures) / sizeof(Texture));
-    Mesh floor(verts, inds, texs);
+    //      WALL
+    Texture texture_wall[] = { Texture ("resource/textures/wall.jpg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE) };
+    Mesh wall = create_object(vertices_wall, indices_wall, texture_wall);
 
-    Shader light_shader("resource/shaders/light.vert", 
-                        "resource/shaders/light.frag");
+
+    //      IMPORTED MODEL
+    std::vector<Texture> modelTextures{ Texture("resource/textures/planks.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE) };
+    Mesh girl = LoadOBJ("resource/models/girl.obj");
+    girl.textures = modelTextures;
+
+
+    //      LIGHT
     std::vector <Vertex> light_verts(light_vertices, light_vertices + sizeof(light_vertices) / sizeof(Vertex));
     std::vector <GLuint> light_inds(light_indices, light_indices + sizeof(light_indices) / sizeof(GLuint));
-    Mesh light(light_verts, light_inds, texs);
-
-    // Aq tu muda a textura
-    std::vector<Texture> modelTextures{
-        Texture("resource/textures/planks.png",
-                "diffuse",
-                0,
-                GL_RGBA,
-                GL_UNSIGNED_BYTE)
-    };
-
-    Mesh myModel = LoadOBJ("resource/models/girl.obj");
-    myModel.textures = modelTextures;
-
-    glm::vec3 model_pos = glm::vec3(10.0f, 0.0f, -1.0f);
-    glm::mat4 model_matrix = glm::mat4(1.0f);
-    model_matrix = glm::translate(model_matrix, model_pos);
+    Mesh light(light_verts, light_inds);
 
 
 
+
+    //  OBJECTS ATTRIBUTES
+
+    //      IMPORTED MODEL
+    glm::vec3 girl_pos = glm::vec3(0.8f, 0.0f, -0.5f);
+    glm::mat4 girl_model = glm::mat4(1.0f);
+    girl_model = glm::translate(girl_model, girl_pos);
+
+
+    //      FLOOR
+    glm::vec3 floor_pos = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::mat4 floor_model = glm::mat4(1.0f);
+    floor_model = glm::translate(floor_model, floor_pos);
+    
+
+    //      WALL
+    glm::vec3 wall_pos = glm::vec3(0.0f, 1.0f, -1.0f);
+    glm::mat4 wall_model = glm::mat4(1.0f);
+    wall_model = glm::translate(wall_model, wall_pos);
+
+
+    //      LIGHT
     glm::vec4 light_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     glm::vec3 light_pos = glm::vec3(0.8f, 0.8f, 0.8f);
     glm::mat4 light_model = glm::mat4(1.0f);
     light_model = glm::translate(light_model, light_pos);
 
-    glm::vec3 cube_pos = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::mat4 cube_model = glm::mat4(1.0f);
-    cube_model = glm::translate(cube_model, cube_pos);
-    
 
+
+    // Shaders uniforms 
+
+    //      LIGHT
     light_shader.Activate();
     glUniformMatrix4fv(glGetUniformLocation(light_shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(light_model));
     glUniform4f(glGetUniformLocation(light_shader.ID, "light_color"), light_color.x, light_color.y, light_color.z, light_color.w);
+
+
+    //      PROGRAM
     shader_program.Activate();
-    glUniformMatrix4fv(glGetUniformLocation(shader_program.ID, "model"), 1, GL_FALSE, glm::value_ptr(cube_model));
     glUniform4f(glGetUniformLocation(shader_program.ID, "light_color"), light_color.x, light_color.y, light_color.z, light_color.w);
     glUniform3f(glGetUniformLocation(shader_program.ID, "light_pos"), light_pos.x, light_pos.y, light_pos.z);
 
+
+    // ENABLES DEPTH
     glEnable(GL_DEPTH_TEST);
 
-    Camera camera (w, h, glm::vec3(0.0f, 0.0f, 2.0f));
+
+    // Camera attributes
+    Camera camera (w, h, glm::vec3(0.0f, 1.0f, 2.0f));
+
+    // "World" colors
+    float r = 2, g = 50, b = 77, a = 1, rgb_code = 256;
 
     float last_time = glfwGetTime();
-
     while (!glfwWindowShouldClose(window)){
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(r/rgb_code, g/rgb_code, b/rgb_code, a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // resets camera's position if user goes too far
+        if (camera.Position.x > 10.0f || camera.Position.y > 10.0f || camera.Position.z > 10.0f){
+            camera.Position = glm::vec3(0.0f, 1.0f, 2.0f);
+        }
 
+        // Just to fix FPS speeding up issues
         float current_time = glfwGetTime();
         float delta_time = current_time - last_time;
         last_time = current_time;
 
         
+        // Controllable camera!
         camera.Inputs(window, delta_time);
         camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
-        // ---- MODELO ----
+
         shader_program.Activate();
-        glUniformMatrix4fv(
-            glGetUniformLocation(shader_program.ID, "model"),
-                                1, GL_FALSE, glm::value_ptr(model_matrix)
-        );
-        myModel.Draw(shader_program, camera);
 
-        // ---- CHÃO ----
-        glUniformMatrix4fv(
-            glGetUniformLocation(shader_program.ID, "model"),
-                                1, GL_FALSE, glm::value_ptr(cube_model) // matriz original do chão
-        );
-        floor.Draw(shader_program, camera);
+        girl.Draw_mesh(girl_model, shader_program, camera);
+        floor.Draw_mesh(floor_model, shader_program, camera);
+        wall.Draw_mesh(wall_model, shader_program, camera);
 
-        // ---- LUZ ----
-        light.Draw(light_shader, camera);     
+        light.Draw(light_shader, camera);
             
 
         glfwSwapBuffers(window);

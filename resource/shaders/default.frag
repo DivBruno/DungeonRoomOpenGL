@@ -59,7 +59,7 @@ vec4 spot_light(){
    float outer_cone = 0.9f;
    float inner_cone = 0.95f;
 
-   float ambient = 0.2f;
+   float ambient = 0.1f;
 
    vec3 Normal = normalize(normal);
    vec3 light_direction = normalize(light_pos - crnt_pos);
@@ -79,5 +79,5 @@ vec4 spot_light(){
 
 void main()
 {
-   FragColor = direct_light();
+   FragColor = point_light();
 }
