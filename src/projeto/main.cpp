@@ -71,64 +71,6 @@ const unsigned int w = 1080;
 const unsigned int h = 720;
 
 
-// CUBE, old organization
-/*
-GLfloat vertices[] = {
-    // VERTICES COORDS            COLOR              UV (text pos)            NORMALS 
-    -0.4f, -0.4f, 0.4f,     1.0f, 0.1f, 0.0f,       0.0f, 1.0f,         0.0f, 0.0f, 1.0f, // front bottom left (0)  
-    0.4f, -0.4f, 0.4f,      0.1f, 1.0f, 0.0f,       1.0f, 1.0f,         0.0f, 0.0f, 1.0f, // front bottom right (1)
-    0.4f, 0.8f, 0.4f,       0.0f, 0.1f, 1.0f,       1.0f, 0.0f,         0.0f, 0.0f, 1.0f, // front top right (2)
-    -0.4f, 0.8f, 0.4f,      1.0f, 1.0f, 1.0f,       0.0f, 0.0f,         0.0f, 0.0f, 1.0f, // front top left (3)
-
-    -0.4f, -0.4f, -0.4f,     1.0f, 0.1f, 0.0f,       1.0f, 1.0f,        0.0f, 0.0f, -1.0f, // back bottom left (4)
-    0.4f, -0.4f, -0.4f,      0.1f, 1.0f, 0.0f,       0.0f, 1.0f,        0.0f, 0.0f, -1.0f, // back bottom right (5)
-    0.4f, 0.8f, -0.4f,       0.0f, 0.1f, 1.0f,       0.0f, 0.0f,        0.0f, 0.0f, -1.0f, // back top right (6)
-    -0.4f, 0.8f, -0.4f,      1.0f, 1.0f, 1.0f,       1.0f, 0.0f,        0.0f, 0.0f, -1.0f, // back top left (7)
-    
-    -0.4f, -0.4f, -0.4f,     1.0f, 0.1f, 0.0f,       1.0f, 1.0f,        -1.0f, 0.0f, 0.0f, // left bottom left (8)
-    -0.4f, -0.4f, 0.4f,     1.0f, 0.1f, 0.0f,       0.0f, 1.0f,         -1.0f, 0.0f, 0.0f, // left bottom left (9)
-    -0.4f, 0.8f, 0.4f,      1.0f, 1.0f, 1.0f,       0.0f, 0.0f,         -1.0f, 0.0f, 0.0f, // left top left (10)
-    -0.4f, 0.8f, -0.4f,      1.0f, 1.0f, 1.0f,       1.0f, 0.0f,        -1.0f, 0.0f, 0.0f, // left top left (11)
-
-    0.4f, -0.4f, 0.4f,      0.1f, 1.0f, 0.0f,       1.0f, 1.0f,         1.0f, 0.0f, 0.0f, // right bottom right (12)
-    0.4f, -0.4f, -0.4f,      0.1f, 1.0f, 0.0f,       0.0f, 1.0f,        1.0f, 0.0f, 0.0f, // right bottom right (13)
-    0.4f, 0.8f, -0.4f,       0.0f, 0.1f, 1.0f,       0.0f, 0.0f,        1.0f, 0.0f, 0.0f, // right top right (14)
-    0.4f, 0.8f, 0.4f,       0.0f, 0.1f, 1.0f,       1.0f, 0.0f,         1.0f, 0.0f, 0.0f, // right top right (15)
-
-    -0.4f, -0.4f, 0.4f,     1.0f, 0.1f, 0.0f,       0.0f, 1.0f,         0.0f, -1.0f, 0.0f, // top bottom left (16)
-    0.4f, -0.4f, 0.4f,      0.1f, 1.0f, 0.0f,       1.0f, 1.0f,         0.0f, -1.0f, 0.0f, // top bottom right (17)
-    0.4f, -0.4f, -0.4f,      0.1f, 1.0f, 0.0f,       1.0f, 0.0f,        0.0f, -1.0f, 0.0f, // top bottom right (18)
-    -0.4f, -0.4f, -0.4f,     1.0f, 0.1f, 0.0f,       0.0f, 0.0f,        0.0f, -1.0f, 0.0f, // top bottom left (19)
-
-    -0.4f, 0.8f, 0.4f,      1.0f, 1.0f, 1.0f,       0.0f, 1.0f,         0.0f, 1.0f, 0.0f, // bottom top left (20)
-    0.4f, 0.8f, 0.4f,       0.0f, 0.1f, 1.0f,       1.0f, 1.0f,         0.0f, 1.0f, 0.0f, // bottom top right (21)
-    0.4f, 0.8f, -0.4f,       0.0f, 0.1f, 1.0f,       1.0f, 0.0f,        0.0f, 1.0f, 0.0f, // bottom top right (22)
-    -0.4f, 0.8f, -0.4f,      1.0f, 1.0f, 1.0f,       0.0f, 0.0f,        0.0f, 1.0f, 0.0f, // bottom top left (23)
-};
-
-
-GLuint indices[] = {
-    0, 1, 2, // front right triangle
-    2, 3, 0, // front left triangle
-
-    12, 13, 14, // right right triang
-    14, 15, 12, // right left triang
-
-    4, 5, 6, // back right triang
-    6, 7, 4, //
-
-    8, 11, 10, // left right triang
-    10, 9, 8,  // left left triang
-
-    16, 17, 18, // bottom right triang
-    18, 19, 16, // bottom left triang
-
-    20, 21, 22, // top right triang
-    22, 23, 20, // top left triang
-};
-*/
-
-
 // OBJECTS VERTICES AND INDICES
 
 //      FLOOR
@@ -161,12 +103,90 @@ GLuint indices_wall[] = {
 };
 
 
-//      RUG 
 
+float rx = 0.2, ry = 0.02, rz = 0.5;
+//      RUG 
+Vertex vertices_rug[] = {
+    Vertex{glm::vec3(-rx, 0.0f, -rz), glm::vec3(1.0f,  0.1f,  0.0f), glm::vec3( -1.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  1.0f)}, 
+    Vertex{glm::vec3(-rx, 0.0f,  rz), glm::vec3(1.0f,  0.1f,  0.0f), glm::vec3( -1.0f,  0.0f,  0.0f), glm::vec2( 0.0f,  1.0f)}, 
+    Vertex{glm::vec3(-rx,   ry,  rz), glm::vec3(1.0f,  1.0f,  1.0f), glm::vec3( -1.0f,  0.0f,  0.0f), glm::vec2( 0.0f,  0.0f)}, 
+    Vertex{glm::vec3(-rx,   ry, -rz), glm::vec3(1.0f,  1.0f,  1.0f), glm::vec3( -1.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  0.0f)}, 
+
+    Vertex{glm::vec3( rx, 0.0f,  rz), glm::vec3(0.1f,  1.0f,  0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  1.0f)}, 
+    Vertex{glm::vec3( rx, 0.0f, -rz), glm::vec3(0.1f,  1.0f,  0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2( 0.0f,  1.0f)},
+    Vertex{glm::vec3( rx,   ry, -rz), glm::vec3(0.0f,  0.1f,  1.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2( 0.0f,  0.0f)},
+    Vertex{glm::vec3( rx,   ry,  rz), glm::vec3(0.0f,  0.1f,  1.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  0.0f)}, 
+
+    Vertex{glm::vec3(-rx, 0.0f,  rz), glm::vec3(1.0f,  0.1f,  0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2( 0.0f,  1.0f)},
+    Vertex{glm::vec3( rx, 0.0f,  rz), glm::vec3(0.1f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2( 1.0f,  1.0f)},
+    Vertex{glm::vec3( rx,   ry,  rz), glm::vec3(0.0f,  0.1f,  1.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2( 1.0f,  0.0f)}, 
+    Vertex{glm::vec3(-rx,   ry,  rz), glm::vec3(1.0f,  1.0f,  1.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2( 0.0f,  0.0f)},   
+
+    Vertex{glm::vec3(-rx, 0.0f, -rz), glm::vec3(1.0f,  0.1f,  0.0f), glm::vec3( 0.0f,  0.0f,  -1.0f), glm::vec2( 1.0f,  1.0f)},
+    Vertex{glm::vec3( rx, 0.0f, -rz), glm::vec3(0.1f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  -1.0f), glm::vec2( 0.0f,  1.0f)},
+    Vertex{glm::vec3( rx,   ry, -rz), glm::vec3(0.0f,  0.1f,  1.0f), glm::vec3( 0.0f,  0.0f,  -1.0f), glm::vec2( 0.0f,  0.0f)}, 
+    Vertex{glm::vec3(-rx,   ry, -rz), glm::vec3(1.0f,  1.0f,  1.0f), glm::vec3( 0.0f,  0.0f,  -1.0f), glm::vec2( 1.0f,  0.0f)},
+};
+
+Vertex vertices_rug_top[] = {
+    Vertex{glm::vec3(-rx,   ry,  rz), glm::vec3(1.0f,  1.0f,  1.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2( 0.0f,  1.0f)}, 
+    Vertex{glm::vec3( rx,   ry,  rz), glm::vec3(0.0f,  0.1f,  1.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2( 1.0f,  1.0f)}, 
+    Vertex{glm::vec3( rx,   ry, -rz), glm::vec3(0.0f,  0.1f,  1.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2( 1.0f,  0.0f)}, 
+    Vertex{glm::vec3(-rx,   ry, -rz), glm::vec3(1.0f,  1.0f,  1.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2( 0.0f,  0.0f)},
+};
+                            
 
 
 //      BOOKSHELF
+float x = 0.25, y = 1.6, z = 0.5;
+Vertex vertices_bookshelf[] = {
+    Vertex{glm::vec3(-x, 0.0f,-z), glm::vec3(1.0f,  0.1f,  0.0f), glm::vec3( -1.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  1.0f)}, 
+    Vertex{glm::vec3(-x, 0.0f, z), glm::vec3(1.0f,  0.1f,  0.0f), glm::vec3( -1.0f,  0.0f,  0.0f), glm::vec2( 0.0f,  1.0f)}, 
+    Vertex{glm::vec3(-x,    y, z), glm::vec3(1.0f,  1.0f,  1.0f), glm::vec3( -1.0f,  0.0f,  0.0f), glm::vec2( 0.0f,  0.0f)}, 
+    Vertex{glm::vec3(-x,    y,-z), glm::vec3(1.0f,  1.0f,  1.0f), glm::vec3( -1.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  0.0f)}, 
 
+    Vertex{glm::vec3( x, 0.0f,  z), glm::vec3(0.1f,  1.0f,  0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  1.0f)}, 
+    Vertex{glm::vec3( x, 0.0f, -z), glm::vec3(0.1f,  1.0f,  0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2( 0.0f,  1.0f)},
+    Vertex{glm::vec3( x,    y, -z), glm::vec3(0.0f,  0.1f,  1.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2( 0.0f,  0.0f)},
+    Vertex{glm::vec3( x,    y,  z), glm::vec3(0.0f,  0.1f,  1.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  0.0f)}, 
+};
+
+Vertex vertices_bookshelf_side[] = {
+    Vertex{glm::vec3(-x, 0.0f,  z), glm::vec3(1.0f,  0.1f,  0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2( 0.0f,  1.0f)},
+    Vertex{glm::vec3( x, 0.0f,  z), glm::vec3(0.1f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2( 1.0f,  1.0f)},
+    Vertex{glm::vec3( x,    y,  z), glm::vec3(0.0f,  0.1f,  1.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2( 1.0f,  0.0f)}, 
+    Vertex{glm::vec3(-x,    y,  z), glm::vec3(1.0f,  1.0f,  1.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2( 0.0f,  0.0f)},   
+
+    Vertex{glm::vec3(-x, 0.0f, -z), glm::vec3(1.0f,  0.1f,  0.0f), glm::vec3( 0.0f,  0.0f,  -1.0f), glm::vec2( 1.0f,  1.0f)},
+    Vertex{glm::vec3( x, 0.0f, -z), glm::vec3(0.1f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  -1.0f), glm::vec2( 0.0f,  1.0f)},
+    Vertex{glm::vec3( x,    y, -z), glm::vec3(0.0f,  0.1f,  1.0f), glm::vec3( 0.0f,  0.0f,  -1.0f), glm::vec2( 0.0f,  0.0f)}, 
+    Vertex{glm::vec3(-x,    y, -z), glm::vec3(1.0f,  1.0f,  1.0f), glm::vec3( 0.0f,  0.0f,  -1.0f), glm::vec2( 1.0f,  0.0f)},
+};
+
+Vertex vertices_bookshelf_top[] = {
+    Vertex{glm::vec3(-x, y,  z), glm::vec3(1.0f,  1.0f,  1.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2( 0.0f,  1.0f)}, 
+    Vertex{glm::vec3( x, y,  z), glm::vec3(0.0f,  0.1f,  1.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2( 1.0f,  1.0f)}, 
+    Vertex{glm::vec3( x, y, -z), glm::vec3(0.0f,  0.1f,  1.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2( 1.0f,  0.0f)}, 
+    Vertex{glm::vec3(-x, y, -z), glm::vec3(1.0f,  1.0f,  1.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2( 0.0f,  0.0f)},
+};
+
+
+GLuint indices_bookshelf[] = {
+    0, 1, 2, // front right triangle
+    2, 3, 0, // front left triangle
+
+    12, 13, 14, // right right triang
+    14, 15, 12, // right left triang
+
+    4, 5, 6, // back right triang
+    6, 7, 4, //
+
+    8, 11, 10, // left right triang
+    10, 9, 8,  // left left triang
+
+    16, 17, 18, // bottom right triang
+    18, 19, 16, // bottom left triang
+};
 
 
 //      LIGHT
@@ -233,16 +253,36 @@ int main(){
     //  OBJECTS
 
     //      FLOOR
-    Texture textures_floor[]{
+    Texture texture_floor[]{
         Texture ("resource/textures/plank.jpg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
         Texture ("resource/textures/plank.jpg", "specular", 1, GL_RED, GL_UNSIGNED_BYTE)
     };
-    Mesh floor = create_object(vertices_floor, indices_floor, textures_floor);
+    Mesh floor = create_object(vertices_floor, indices_floor, texture_floor);
 
 
     //      WALL
     Texture texture_wall[] = { Texture ("resource/textures/wall.jpg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE) };
     Mesh wall = create_object(vertices_wall, indices_wall, texture_wall);
+
+
+    //      BOOKSHELF
+    Texture texture_bookshelf[] = { Texture ("resource/textures/book.jpg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE) };
+    Mesh bookshelf = create_object(vertices_bookshelf, indices_bookshelf, texture_bookshelf);
+
+    Texture texture_bookshelf_top[] = { Texture ("resource/textures/book_top.jpg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE) };
+    Mesh bookshelf_top = create_object(vertices_bookshelf_top, indices_bookshelf, texture_bookshelf_top);
+
+    Texture texture_bookshelf_side[] = { Texture ("resource/textures/book_side.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE) };
+    Mesh bookshelf_side = create_object(vertices_bookshelf_side, indices_bookshelf, texture_bookshelf_side);
+
+
+    //      RUG
+    Texture texture_rug[] = { Texture ("resource/textures/rug.jpg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE) };
+    Mesh rug = create_object(vertices_rug, indices_bookshelf, texture_rug);
+
+    Texture texture_rug_top[] = { Texture ("resource/textures/rug_top.jpg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE) };
+    Mesh rug_top = create_object(vertices_rug_top, indices_bookshelf, texture_rug_top);
+
 
 
     //      IMPORTED MODEL
@@ -255,6 +295,7 @@ int main(){
     std::vector <Vertex> light_verts(light_vertices, light_vertices + sizeof(light_vertices) / sizeof(Vertex));
     std::vector <GLuint> light_inds(light_indices, light_indices + sizeof(light_indices) / sizeof(GLuint));
     Mesh light(light_verts, light_inds);
+
 
 
 
@@ -277,6 +318,18 @@ int main(){
     glm::vec3 wall_pos = glm::vec3(0.0f, 1.0f, -1.0f);
     glm::mat4 wall_model = glm::mat4(1.0f);
     wall_model = glm::translate(wall_model, wall_pos);
+
+
+    //      BOOKSHELF
+    glm::vec3 bookshelf_pos = glm::vec3(-0.8f, 0.001f, 0.2f);
+    glm::mat4 bookshelf_model = glm::mat4(1.0f);
+    bookshelf_model = glm::translate(bookshelf_model, bookshelf_pos);
+
+
+     //      RUG
+    glm::vec3 rug_pos = glm::vec3(-0.2f, 0.001f, 0.2f);
+    glm::mat4 rug_model = glm::mat4(1.0f);
+    rug_model = glm::translate(rug_model, rug_pos);
 
 
     //      LIGHT
@@ -338,9 +391,16 @@ int main(){
 
         shader_program.Activate();
 
+        bookshelf.Draw_mesh(bookshelf_model, shader_program, camera);
+        bookshelf_top.Draw_mesh(bookshelf_model, shader_program, camera);
+        bookshelf_side.Draw_mesh(bookshelf_model, shader_program, camera);
+        
         girl.Draw_mesh(girl_model, shader_program, camera);
         floor.Draw_mesh(floor_model, shader_program, camera);
         wall.Draw_mesh(wall_model, shader_program, camera);
+
+        rug.Draw_mesh(rug_model, shader_program, camera);
+        rug_top.Draw_mesh(rug_model, shader_program, camera);
 
         light.Draw(light_shader, camera);
             
@@ -354,6 +414,6 @@ int main(){
     light_shader.Delete();
     glfwDestroyWindow(window);
     glfwTerminate();
-    
+
     return 0;
 }
