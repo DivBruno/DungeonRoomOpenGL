@@ -1,13 +1,27 @@
 #pragma once
+
+#include "Mesh.h"
 #include "shader_class.h"
-#include "VAO.h"
+#include "Camera.h"
 #include <glm/glm.hpp>
-#include "Texture.h"
-class Table {
-public:
+
+class Table
+{
+private:
     glm::vec3 position;
 
-    Table(glm::vec3 pos);
-    void draw(Shader& shader, VAO& vao, int indexCount,
-        Texture& mesa, Texture& mesaInterna);
+    Mesh meshBranco; 
+    Mesh meshVerde; 
+
+public:
+    Table(glm::vec3 pos,
+          Mesh branco,
+          Mesh verde);
+
+    void draw(Shader& shader, Camera& camera);
 };
+
+
+
+
+
