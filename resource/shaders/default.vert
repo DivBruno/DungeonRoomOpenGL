@@ -17,7 +17,8 @@ void main()
 {
    crnt_pos = vec3(model * vec4(aPos, 1.0f));
 
-   normal = aNormal;
+   mat3 normalMatrix = transpose(inverse(mat3(model)));
+   normal = normalize(normalMatrix * aNormal);
    color = aColor;
    text_coord = aText;
 
