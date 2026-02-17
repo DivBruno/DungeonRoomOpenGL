@@ -13,7 +13,7 @@ uniform vec3 cam_pos;
 void main()
 {
     
-    vec3 baseColor;
+    vec3 baseColor = vec3(1.0, 0.0, 0.0);
 
     // ================= PARÂMETROS PROPORCIONAIS =================
     float radius = length(local_pos);
