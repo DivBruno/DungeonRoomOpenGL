@@ -1,5 +1,6 @@
 #include "Mesh.h"
 #include "tiny_obj_loader.h"
+#include "desk.h"
 
 Mesh LoadOBJ(const std::string& path) {
     tinyobj::attrib_t attrib;
@@ -113,6 +114,54 @@ GLuint indices[] = {
 };
 */
 
+//Cubo usado de base para a escrivaninha
+Vertex verticesCubo[] = {
+    //Frente
+    Vertex{glm::vec3(-0.5f,-0.5f, 0.5f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3( 0.5f,-0.5f, 0.5f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3( 0.5f, 0.5f, 0.5f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(0,1)},
+
+    //Trás
+    Vertex{glm::vec3( 0.5f,-0.5f,-0.5f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(-0.5f,-0.5f,-0.5f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3(-0.5f, 0.5f,-0.5f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3( 0.5f, 0.5f,-0.5f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(0,1)},
+
+    //Esquerda
+    Vertex{glm::vec3(-0.5f,-0.5f,-0.5f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(-0.5f,-0.5f, 0.5f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(-0.5f, 0.5f,-0.5f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+
+    //Direita
+    Vertex{glm::vec3(0.5f,-0.5f, 0.5f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(0.5f,-0.5f,-0.5f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3(0.5f, 0.5f,-0.5f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+
+    //Topo
+    Vertex{glm::vec3(-0.5f,0.5f, 0.5f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3( 0.5f,0.5f, 0.5f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3( 0.5f,0.5f,-0.5f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(-0.5f,0.5f,-0.5f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+
+    //Base
+    Vertex{glm::vec3(-0.5f,-0.5f,-0.5f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3( 0.5f,-0.5f,-0.5f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3( 0.5f,-0.5f, 0.5f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(-0.5f,-0.5f, 0.5f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+};
+
+GLuint indicesCubo[] = {
+
+    0,1,2, 2,3,0,       // frente
+    4,5,6, 6,7,4,       // trás
+    8,9,10, 10,11,8,    // esquerda
+    12,13,14, 14,15,12, // direita
+    16,17,18, 18,19,16, // topo
+    20,21,22, 22,23,20  // base
+};
 
 // SQUARE
 Vertex vertices[] = {
@@ -122,7 +171,6 @@ Vertex vertices[] = {
     Vertex{glm::vec3( 1.0f,  0.0f, -1.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec2( 1.0f,  1.0f)},
     Vertex{glm::vec3( 1.0f,  0.0f,  1.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec2( 1.0f,  0.0f)}
 };
-
 
 GLuint indices[] = {
     0, 1, 2,
@@ -141,9 +189,7 @@ Vertex light_vertices[] = {
     Vertex{glm::vec3( 0.1f,  0.1f,  0.1f)}
 };
 
-
-GLuint light_indices[] =
-{
+GLuint light_indices[] = {
 	0, 1, 2,
 	0, 2, 3,
 	0, 4, 7,
@@ -158,7 +204,53 @@ GLuint light_indices[] =
 	4, 6, 7
 };
 
+//Tronco de pirâmide usado para modelar partes da escrivaninha
+GLuint indicesTroncoP[] = {
+	0,1,2,	2,3,0,
+	4,5,6,	6,7,4,
+	8,9,10,	10,11,8,
+	12,13,14,	14,15,12,
+	16,17,18,	18,19,16,
+    20,21,22,   22,23,20
+};
 
+Vertex troncoPiramide[] = {
+    // PLACA DA FRENTE
+    Vertex{glm::vec3(0.015f, 0.015f,  0.01f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(-0.015f, 0.015f,  0.01f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(0,1)},
+    Vertex{glm::vec3(-0.015f, -0.015f,  0.01f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(0.015f, -0.015f,  0.01f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(1,0)},
+
+    //Placa tras
+    Vertex{glm::vec3(0.0225f, 0.0225f,  0.0f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(-0.0225f, 0.0225f,  0.0f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(0,1)},
+    Vertex{glm::vec3(-0.0225f, -0.0225f,  0.0f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(0.0225f, -0.0225f,  0.0f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(1,0)},
+
+    // ESQUERDA
+    Vertex{glm::vec3(-0.015f, -0.015f, 0.01f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3(-0.015f, 0.015f, 0.01f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(-0.0225f, 0.0225f, 0.0f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+    Vertex{glm::vec3(-0.0225f, -0.0225f, 0.0f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+ 	
+    // DIREITA
+    Vertex{glm::vec3(0.0151f, 0.015f, 0.01f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3(0.015f, -0.015f, 0.01f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(0.0225f, -0.0225f, 0.0f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+    Vertex{glm::vec3(0.0225f, 0.0225f, 0.0f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+    
+	// BAIXO
+    Vertex{glm::vec3(0.015f, -0.015f, 0.01f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(-0.015f, -0.015f, 0.01f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+    Vertex{glm::vec3(-0.0225f, -0.0225f, 0.0f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(0.0225f, -0.0225f, 0.0f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(1,0)},
+    
+	// CIMA
+    Vertex{glm::vec3(-0.015f, 0.015f, 0.01f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(0.015f, 0.015f, 0.01f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+    Vertex{glm::vec3(0.0225f, 0.0225f, 0.0f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(-0.0225f, 0.0225f, 0.0f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(1,0)}
+};
 
 void Set_version_profile(int major, int minor){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
@@ -201,6 +293,15 @@ int main(){
     std::vector <GLuint> light_inds(light_indices, light_indices + sizeof(light_indices) / sizeof(GLuint));
     Mesh light(light_verts, light_inds, texs);
 
+    //Para ser usado em objetos
+    std::vector <Vertex> vertsCubo(verticesCubo, verticesCubo + sizeof(verticesCubo)/sizeof(Vertex));
+    std::vector <GLuint> indsCubo(indicesCubo, indicesCubo + sizeof(indicesCubo) /  sizeof(GLuint));
+    Mesh cubo(vertsCubo, indsCubo, texs);
+
+    std::vector <Vertex> vertsTroncoP(troncoPiramide, troncoPiramide + sizeof(troncoPiramide)/sizeof(Vertex));
+    std::vector <GLuint> indsTroncoP(indicesTroncoP, indicesTroncoP + sizeof(indicesTroncoP)/sizeof(GLuint));
+    Mesh troncoPiramideM(vertsTroncoP, indsTroncoP, texs);
+
     // Aq tu muda a textura
     std::vector<Texture> modelTextures{
         Texture("resource/textures/planks.png",
@@ -216,8 +317,6 @@ int main(){
     glm::vec3 model_pos = glm::vec3(10.0f, 0.0f, -1.0f);
     glm::mat4 model_matrix = glm::mat4(1.0f);
     model_matrix = glm::translate(model_matrix, model_pos);
-
-
 
     glm::vec4 light_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     glm::vec3 light_pos = glm::vec3(0.8f, 0.8f, 0.8f);
@@ -272,8 +371,7 @@ int main(){
         floor.Draw(shader_program, camera);
 
         // ---- LUZ ----
-        light.Draw(light_shader, camera);     
-            
+        light.Draw(light_shader, camera);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
