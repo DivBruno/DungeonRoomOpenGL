@@ -1,4 +1,6 @@
 #include "Texture.h"
+#include "table.h"
+#include "pokeball.h"
 
 Texture::Texture(const char* image, const char* texType, GLuint slot, GLenum format, GLenum pixelType){
     type = texType;
