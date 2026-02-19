@@ -51,6 +51,21 @@ void main()
         else
             baseColor = vec3(0.0, 0.0, 0.0);
     }
+    // ================= ILUMINAÇÃO (IGUAL AO DEFAULT) =================
 
-    FragColor = vec4(baseColor, 1.0);
+    float ambient = 0.2f;
+
+    vec3 Normal = normalize(normal);
+    vec3 light_direction = normalize(vec3(1.0f, 1.0f, 0.0f));
+
+    float diffuse = max(dot(Normal, light_direction), 0.0f);
+
+    float specular_light = 0.5f;
+    vec3 view_direction = normalize(cam_pos - crnt_pos);
+    vec3 reflection_direction = reflect(-light_direction, Normal);
+    float spec_amount = pow(max(dot(view_direction, reflection_direction), 0.0f), 16);
+    float specular = spec_amount * specular_light;
+
+    vec3 finalColor = baseColor * (diffuse + ambient) + vec3(1.0) * specular;
+    FragColor = vec4(finalColor, 1.0);
 }
