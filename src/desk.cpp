@@ -1,4 +1,4 @@
-#include "desk.h"
+#include "Desk.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 Desk::Desk(Mesh* cubo, Mesh* troncoPiramide, glm::vec3 posicaoInicial)

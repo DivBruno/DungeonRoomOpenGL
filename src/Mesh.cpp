@@ -24,6 +24,15 @@ void  Mesh::Draw(Shader &shader, Camera &camera){
     shader.Activate();
     VAO.Bind();
 
+    bool hasTex = textures.size() > 0;
+    glUniform1i(glGetUniformLocation(shader.ID, "hasTexture"), hasTex);
+
+    glUniform4f(glGetUniformLocation(shader.ID, "baseColorFactor"),
+                baseColorFactor.r,
+                baseColorFactor.g,
+                baseColorFactor.b,
+                baseColorFactor.a);
+
     unsigned int numDiffuse  = 0;
     unsigned int numSpecular = 0;
 

@@ -14,6 +14,8 @@ class Mesh{
     std::vector <GLuint> indices;
     std::vector <Texture> textures;
 
+    glm::vec4 baseColorFactor = glm::vec4(1.0f);
+
     VAO VAO;
 
     Mesh(std::vector <Vertex> &vertices, std::vector <GLuint> &indices, std::vector <Texture> &textures);

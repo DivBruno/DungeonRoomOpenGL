@@ -1,0 +1,11 @@
+Model Information:
+* title:	Pokédex
+* source:	https://sketchfab.com/3d-models/pokedex-3c14483817704bf6a68a9c2a3c74af63
+* author:	pasqual (https://sketchfab.com/pasqual)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Pokédex" (https://sketchfab.com/3d-models/pokedex-3c14483817704bf6a68a9c2a3c74af63) by pasqual (https://sketchfab.com/pasqual) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
