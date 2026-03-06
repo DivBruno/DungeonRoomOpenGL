@@ -68,6 +68,12 @@ Mesh LoadOBJ(const std::string& path) {
 }
 
 
+void bookshelf_draw(Mesh bookshelf, Mesh bookshelf_top, Mesh bookshelf_side, glm::mat4 bookshelf_model, Shader shader_program, Camera camera){
+    bookshelf.Draw_mesh(bookshelf_model, shader_program, camera);
+    bookshelf_top.Draw_mesh(bookshelf_model, shader_program, camera);
+    bookshelf_side.Draw_mesh(bookshelf_model, shader_program, camera);
+}
+
 // Window res
 const unsigned int w = 1080;
 const unsigned int h = 720;
@@ -78,15 +84,15 @@ const unsigned int h = 720;
 //      FLOOR
 Vertex vertices_floor[] = {
     //                      COORDS                          NORMALS                         COLORS               UV (text pos)
-    Vertex{glm::vec3(-5.0f,  0.0f,  5.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 0.0f,  0.0f)},
-    Vertex{glm::vec3(-5.0f,  0.0f, -5.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 0.0f,  1.0f)},
-    Vertex{glm::vec3( 5.0f,  0.0f, -5.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  1.0f)},
-    Vertex{glm::vec3( 5.0f,  0.0f,  5.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  0.0f)}
+    Vertex{glm::vec3(-4.0f,  0.0f,  5.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 0.0f,  0.0f)},
+    Vertex{glm::vec3(-4.0f,  0.0f, -5.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 0.0f,  1.0f)},
+    Vertex{glm::vec3( 4.0f,  0.0f, -5.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  1.0f)},
+    Vertex{glm::vec3( 4.0f,  0.0f,  5.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  0.0f)}
 };
 
 
 //      Walls
-float x_wls = 5.0, y_wls = 2, z_wls = 5.0;
+float x_wls = 4.0, y_wls = 2, z_wls = 5.0;
 Vertex vertices_room[] = {
     // left
     Vertex{glm::vec3(-x_wls,    0.0f,-z_wls), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  1.0f)}, 
@@ -231,9 +237,11 @@ GLuint indices[] = {
     10, 9, 8, 
 
     16, 17, 18,
-    18, 19, 16
-};
+    18, 19, 16,
 
+    20, 21, 22,
+    22, 23, 20
+};
 
 
 //      LIGHT
@@ -367,7 +375,7 @@ int main(){
 
 
 
-    float x = -3, y = 0, z = 0;
+    float x = 2.5, y = 0.8, z = -2.0;
     Pokeball pokeballCenter(glm::vec3(x +  0.0f,   y + -0.35f, z + 0.0f), 0.06f);
     Pokeball pokeballLeft(glm::vec3(  x + -0.45f,  y + -0.35f, z + 0.0f), 0.060f);
     Pokeball pokeballRight(glm::vec3( x +  0.45f,  y + -0.35f, z + 0.0f), 0.060f);
@@ -379,16 +387,13 @@ int main(){
     std::vector<Texture> texBranco{ branco };
     std::vector<Texture> texVerde{ verde };
 
-
-
-
     // reutilizando o mesmo quadrado (verts e inds)
     Mesh meshBranco(verts, inds, texBranco);
     Mesh meshVerde(verts, inds, texVerde);
 
     // ===== CRIA TABLE =====
     Table table(
-        glm::vec3(0.0f, 2.0f, 0.0f),
+        glm::vec3(x, y, z),
         meshBranco,
         meshVerde
     );
@@ -434,20 +439,55 @@ int main(){
     wall_model = glm::translate(wall_model, wall_pos);
 
 
-    //      BOOKSHELF
-    glm::vec3 bookshelf_pos = glm::vec3(-0.8f, 0.001f, 0.2f);
-    glm::mat4 bookshelf_model = glm::mat4(1.0f);
-    bookshelf_model = glm::translate(bookshelf_model, bookshelf_pos);
-    // bookshelf_model = glm::rotate(bookshelf_model, 1.57f, glm::vec3(0.0f, 1.0f, 0.0f));
+    //      BOOKSHELVES
+    glm::vec3 bookshelf_pos_1 = glm::vec3(-3.45f, 0.001f, 1.0f);
+    glm::vec3 bookshelf_pos_2 = glm::vec3(-2.4f, 0.001f, 1.0f);
+    glm::vec3 bookshelf_pos_3 = glm::vec3(-1.35f, 0.001f, 1.0f);
+    glm::vec3 bookshelf_pos_4 = glm::vec3(3.45f, 0.001f, 1.0f);
+    glm::vec3 bookshelf_pos_5 = glm::vec3(2.4f, 0.001f, 1.0f);
+    glm::vec3 bookshelf_pos_6 = glm::vec3(1.35f, 0.001f, 1.0f);
+    glm::vec3 bookshelf_pos_7 = glm::vec3(-3.45f, 0.001f, -4.74f);
+    glm::vec3 bookshelf_pos_8 = glm::vec3(3.45f, 0.001f, -4.74f);
 
-    glm::vec3 table_pos = glm::vec3(3.0f, 0.001f, 0.2f);
-    glm::mat4 table_model = glm::mat4(1.0f);
-    table_model = glm::translate(table_model, table_pos);
+    glm::mat4 bookshelf_model_1 = glm::mat4(1.0f);
+    bookshelf_model_1 = glm::translate(bookshelf_model_1, bookshelf_pos_1);
+    bookshelf_model_1 = glm::rotate(bookshelf_model_1, 1.57f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 bookshelf_model_2 = glm::mat4(1.0f);
+    bookshelf_model_2 = glm::translate(bookshelf_model_2, bookshelf_pos_2);
+    bookshelf_model_2 = glm::rotate(bookshelf_model_2, 1.57f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 bookshelf_model_3 = glm::mat4(1.0f);
+    bookshelf_model_3 = glm::translate(bookshelf_model_3, bookshelf_pos_3);
+    bookshelf_model_3 = glm::rotate(bookshelf_model_3, 1.57f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 bookshelf_model_4 = glm::mat4(1.0f);
+    bookshelf_model_4 = glm::translate(bookshelf_model_4, bookshelf_pos_4);
+    bookshelf_model_4 = glm::rotate(bookshelf_model_4, 1.57f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 bookshelf_model_5 = glm::mat4(1.0f);
+    bookshelf_model_5 = glm::translate(bookshelf_model_5, bookshelf_pos_5);
+    bookshelf_model_5 = glm::rotate(bookshelf_model_5, 1.57f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 bookshelf_model_6 = glm::mat4(1.0f);
+    bookshelf_model_6 = glm::translate(bookshelf_model_6, bookshelf_pos_6);
+    bookshelf_model_6 = glm::rotate(bookshelf_model_6, 1.57f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 bookshelf_model_7 = glm::mat4(1.0f);
+    bookshelf_model_7 = glm::translate(bookshelf_model_7, bookshelf_pos_7);
+    bookshelf_model_7 = glm::rotate(bookshelf_model_7, 1.57f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 bookshelf_model_8 = glm::mat4(1.0f);
+    bookshelf_model_8 = glm::translate(bookshelf_model_8, bookshelf_pos_8);
+    bookshelf_model_8 = glm::rotate(bookshelf_model_8, 1.57f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+    
 
     //      RUG
-    glm::vec3 rug_pos = glm::vec3(-0.2f, 0.001f, 0.2f);
+    glm::vec3 rug_pos = glm::vec3(0.18f, 0.001f, 4.8f);
     glm::mat4 rug_model = glm::mat4(1.0f);
     rug_model = glm::translate(rug_model, rug_pos);
+    rug_model = glm::rotate(rug_model, 1.57f, glm::vec3(0.0f, 1.0f, 0.0f));
 
 
 
@@ -516,9 +556,14 @@ int main(){
 
 
         shader_program.Activate();
-        bookshelf.Draw_mesh(bookshelf_model, shader_program, camera);
-        bookshelf_top.Draw_mesh(bookshelf_model, shader_program, camera);
-        bookshelf_side.Draw_mesh(bookshelf_model, shader_program, camera);
+        bookshelf_draw(bookshelf, bookshelf_top, bookshelf_side, bookshelf_model_1, shader_program, camera);
+        bookshelf_draw(bookshelf, bookshelf_top, bookshelf_side, bookshelf_model_2, shader_program, camera);
+        bookshelf_draw(bookshelf, bookshelf_top, bookshelf_side, bookshelf_model_3, shader_program, camera);
+        bookshelf_draw(bookshelf, bookshelf_top, bookshelf_side, bookshelf_model_4, shader_program, camera);
+        bookshelf_draw(bookshelf, bookshelf_top, bookshelf_side, bookshelf_model_5, shader_program, camera);
+        bookshelf_draw(bookshelf, bookshelf_top, bookshelf_side, bookshelf_model_6, shader_program, camera);
+        bookshelf_draw(bookshelf, bookshelf_top, bookshelf_side, bookshelf_model_7, shader_program, camera);
+        bookshelf_draw(bookshelf, bookshelf_top, bookshelf_side, bookshelf_model_8, shader_program, camera);
         
         floor.Draw_mesh(floor_model, shader_program, camera);
         wall.Draw_mesh(wall_model, shader_program, camera);
