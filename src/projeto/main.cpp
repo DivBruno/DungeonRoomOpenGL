@@ -303,6 +303,8 @@ int main(){
     std::vector <GLuint> indsTroncoP(indicesTroncoP, indicesTroncoP + sizeof(indicesTroncoP)/sizeof(GLuint));
     Mesh troncoPiramideM(vertsTroncoP, indsTroncoP, texs);
 
+    Desk desk(&cubo, &troncoPiramideM, glm::vec3(0,0,0));
+
     // Aq tu muda a textura
     std::vector<Texture> modelTextures{
         Texture("resource/textures/planks.png",
@@ -328,7 +330,6 @@ int main(){
     glm::mat4 cube_model = glm::mat4(1.0f);
     cube_model = glm::translate(cube_model, cube_pos);
     
-
     light_shader.Activate();
     glUniformMatrix4fv(glGetUniformLocation(light_shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(light_model));
     glUniform4f(glGetUniformLocation(light_shader.ID, "light_color"), light_color.x, light_color.y, light_color.z, light_color.w);
@@ -374,7 +375,7 @@ int main(){
 
         // ---- LUZ ----
         light.Draw(light_shader, camera);
-
+        
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
