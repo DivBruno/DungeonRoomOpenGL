@@ -10,7 +10,7 @@ using json = nlohmann::json;
 class Model
 {
 public:
-	Model(const char* file);
+	Model(const char* file, glm::vec3 pos, glm::vec3 rot, glm::vec3 sca);
 
 	void Draw(Shader& shader, Camera& camera);
 
@@ -18,6 +18,11 @@ private:
 	const char* file;
 	std::vector<unsigned char> data;
 	json JSON;
+
+
+	glm::vec3 position;
+	glm::vec3 scale;
+	glm::vec3 rotation;
 
 	std::vector<Mesh> meshes;
 	std::vector<glm::vec3> translationsMeshes;

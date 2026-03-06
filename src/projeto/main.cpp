@@ -345,7 +345,7 @@ int main(){
     Camera camera (w, h, glm::vec3(0.0f, 0.0f, 2.0f));
 
     //Cria o model da pokedex
-    Model pokedex("resource/models/pokedex/SegundaOpcao/scene.gltf");
+    Model pokedex("resource/models/pokedex/SegundaOpcao/scene.gltf", glm::vec3(0),glm::vec3(0,0,90),glm::vec3(0.5, 0.5, 0.5));
     float last_time = glfwGetTime();
 
     while (!glfwWindowShouldClose(window)){
@@ -376,6 +376,7 @@ int main(){
         );
         floor.Draw(shader_program, camera);
 
+        pokedex.Draw(shader_program, camera);
         // ---- LUZ ----
         light.Draw(light_shader, camera);
         

@@ -1,6 +1,7 @@
 #include"Model.h"
 
-Model::Model(const char* file)
+Model::Model(const char* file, glm::vec3 pos, glm::vec3 rot, glm::vec3 sca)
+	:position(pos), rotation(rot), scale(sca)
 {
 	std::string text = get_file_contents(file);
 	JSON = json::parse(text);
@@ -15,18 +16,31 @@ void Model::Draw(Shader& shader, Camera& camera)
 {
     shader.Activate();
 
+    glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
+
+    glm::mat4 rotX = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1,0,0));
+    glm::mat4 rotY = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.y), glm::vec3(0,1,0));
+    glm::mat4 rotZ = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.z), glm::vec3(0,0,1));
+
+    glm::mat4 sca = glm::scale(glm::mat4(1.0f), scale);
+
+    glm::mat4 modelTransform = trans * rotX * rotY * rotZ * sca;
+
     for (unsigned int i = 0; i < meshes.size(); i++)
     {
+        glm::mat4 finalMatrix = modelTransform * matricesMeshes[i];
+
         glUniformMatrix4fv(
             glGetUniformLocation(shader.ID, "model"),
             1,
             GL_FALSE,
-            glm::value_ptr(matricesMeshes[i])
+            glm::value_ptr(finalMatrix)
         );
 
         meshes[i].Draw(shader, camera);
     }
 }
+
 
 void Model::loadMesh(unsigned int indMesh)
 {
