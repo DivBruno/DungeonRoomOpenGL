@@ -235,7 +235,7 @@ Vertex troncoPiramide[] = {
     Vertex{glm::vec3(-0.0225f, -0.0225f, 0.0f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(1,1)},
  	
     // DIREITA
-    Vertex{glm::vec3(0.0151f, 0.015f, 0.01f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3(0.015f, 0.015f, 0.01f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(1,0)},
     Vertex{glm::vec3(0.015f, -0.015f, 0.01f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(0,0)},
     Vertex{glm::vec3(0.0225f, -0.0225f, 0.0f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(0,1)},
     Vertex{glm::vec3(0.0225f, 0.0225f, 0.0f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(1,1)},
@@ -280,6 +280,7 @@ int main(){
         Texture ("resource/textures/planksSpec.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE)
     };
 
+    Texture deskTex("resource/textures/Mesa.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE);
 
     Shader shader_program("resource/shaders/default.vert", 
                           "resource/shaders/default.frag");
@@ -294,14 +295,15 @@ int main(){
     std::vector <GLuint> light_inds(light_indices, light_indices + sizeof(light_indices) / sizeof(GLuint));
     Mesh light(light_verts, light_inds, texs);
 
+    std::vector<Texture> mesa{deskTex};
     //Para ser usado em objetos
     std::vector <Vertex> vertsCubo(verticesCubo, verticesCubo + sizeof(verticesCubo)/sizeof(Vertex));
     std::vector <GLuint> indsCubo(indicesCubo, indicesCubo + sizeof(indicesCubo) /  sizeof(GLuint));
-    Mesh cubo(vertsCubo, indsCubo, texs);
+    Mesh cubo(vertsCubo, indsCubo, mesa);
 
     std::vector <Vertex> vertsTroncoP(troncoPiramide, troncoPiramide + sizeof(troncoPiramide)/sizeof(Vertex));
     std::vector <GLuint> indsTroncoP(indicesTroncoP, indicesTroncoP + sizeof(indicesTroncoP)/sizeof(GLuint));
-    Mesh troncoPiramideM(vertsTroncoP, indsTroncoP, texs);
+    Mesh troncoPiramideM(vertsTroncoP, indsTroncoP, mesa);
 
     Desk desk(&cubo, &troncoPiramideM, glm::vec3(0,0,0));
 
@@ -376,6 +378,7 @@ int main(){
 
         // ---- LUZ ----
         light.Draw(light_shader, camera);
+        
         
         glfwSwapBuffers(window);
         glfwPollEvents();
