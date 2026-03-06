@@ -342,7 +342,8 @@ int main(){
 
     Camera camera (w, h, glm::vec3(0.0f, 0.0f, 2.0f));
 
-    Model model("resource/models/pokedex/SegundaOpcao/scene.gltf");
+    //Cria o model da pokedex
+    Model pokedex("resource/models/pokedex/SegundaOpcao/scene.gltf");
     float last_time = glfwGetTime();
 
     while (!glfwWindowShouldClose(window)){
