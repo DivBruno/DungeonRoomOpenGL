@@ -346,6 +346,8 @@ int main(){
 
     //Cria o model da pokedex
     Model pokedex("resource/models/pokedex/SegundaOpcao/scene.gltf", glm::vec3(0),glm::vec3(0),glm::vec3(1));
+    Model planta("resource/models/planta/scene.gltf", glm::vec3(1,-0.36,0), glm::vec3(0), glm::vec3(0.125));
+    Model healer("resource/models/pokemon_healer/scene.gltf", glm::vec3(0,0.36,0), glm::vec3(0), glm::vec3(0.03125));
     float last_time = glfwGetTime();
 
     while (!glfwWindowShouldClose(window)){
@@ -375,7 +377,7 @@ int main(){
                                 1, GL_FALSE, glm::value_ptr(cube_model) // matriz original do chão
         );
         floor.Draw(shader_program, camera);
-
+        
         // ---- LUZ ----
         light.Draw(light_shader, camera);
         
