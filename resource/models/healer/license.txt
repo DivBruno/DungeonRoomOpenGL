@@ -1,0 +1,11 @@
+Model Information:
+* title:	Pokémon Healer
+* source:	https://sketchfab.com/3d-models/pokemon-healer-7e105d0bd978459d9150260f29745dbd
+* author:	Bentroen (https://sketchfab.com/Bentroen)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Pokémon Healer" (https://sketchfab.com/3d-models/pokemon-healer-7e105d0bd978459d9150260f29745dbd) by Bentroen (https://sketchfab.com/Bentroen) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
