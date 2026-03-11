@@ -292,12 +292,7 @@ std::vector<Texture> Model::getTextures()
 	return textures;
 }
 
-std::vector<Vertex> Model::assembleVertices
-(
-	std::vector<glm::vec3> positions,
-	std::vector<glm::vec3> normals,
-	std::vector<glm::vec2> texUVs
-)
+std::vector<Vertex> Model::assembleVertices(std::vector<glm::vec3> positions, std::vector<glm::vec3> normals, std::vector<glm::vec2> texUVs)
 {
 	std::vector<Vertex> vertices;
 	for (int i = 0; i < positions.size(); i++)

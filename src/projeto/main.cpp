@@ -85,8 +85,8 @@ Vertex vertices_floor[] = {
     //                      COORDS                          NORMALS                         COLORS               UV (text pos)
     Vertex{glm::vec3(-4.0f,  0.0f,  5.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 0.0f,  0.0f)},
     Vertex{glm::vec3(-4.0f,  0.0f, -5.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 0.0f,  1.0f)},
-    Vertex{glm::vec3( 4.0f,  0.0f, -5.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  1.0f)},
-    Vertex{glm::vec3( 4.0f,  0.0f,  5.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  0.0f)}
+    Vertex{glm::vec3( 4.0f,  0.0f, -5.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 4.0f,  1.0f)},
+    Vertex{glm::vec3( 4.0f,  0.0f,  5.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 4.0f,  0.0f)}
 };
 
 
