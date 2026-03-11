@@ -92,9 +92,74 @@ Mesh Mesh::GenerateSphere(float radius, unsigned int sectors, unsigned int stack
     return Mesh(vertices, indices, empty_textures);
 }
 
+Mesh Mesh::GenerateCube(float size)
+{
+    float h = size / 2.0f;
+
+    std::vector<Vertex> vertices =
+    {
+        // FRONT
+        {{-h,-h, h},{0,0,1},{1,1,1},{0,0}},
+        {{ h,-h, h},{0,0,1},{1,1,1},{1,0}},
+        {{ h, h, h},{0,0,1},{1,1,1},{1,1}},
+        {{-h, h, h},{0,0,1},{1,1,1},{0,1}},
+
+        // BACK
+        {{-h,-h,-h},{0,0,-1},{1,1,1},{1,0}},
+        {{-h, h,-h},{0,0,-1},{1,1,1},{1,1}},
+        {{ h, h,-h},{0,0,-1},{1,1,1},{0,1}},
+        {{ h,-h,-h},{0,0,-1},{1,1,1},{0,0}},
+
+        // LEFT
+        {{-h,-h,-h},{-1,0,0},{1,1,1},{0,0}},
+        {{-h,-h, h},{-1,0,0},{1,1,1},{1,0}},
+        {{-h, h, h},{-1,0,0},{1,1,1},{1,1}},
+        {{-h, h,-h},{-1,0,0},{1,1,1},{0,1}},
+
+        // RIGHT
+        {{ h,-h,-h},{1,0,0},{1,1,1},{1,0}},
+        {{ h, h,-h},{1,0,0},{1,1,1},{1,1}},
+        {{ h, h, h},{1,0,0},{1,1,1},{0,1}},
+        {{ h,-h, h},{1,0,0},{1,1,1},{0,0}},
+
+        // TOP
+        {{-h, h,-h},{0,1,0},{1,1,1},{0,1}},
+        {{-h, h, h},{0,1,0},{1,1,1},{0,0}},
+        {{ h, h, h},{0,1,0},{1,1,1},{1,0}},
+        {{ h, h,-h},{0,1,0},{1,1,1},{1,1}},
+
+        // BOTTOM
+        {{-h,-h,-h},{0,-1,0},{1,1,1},{1,1}},
+        {{ h,-h,-h},{0,-1,0},{1,1,1},{0,1}},
+        {{ h,-h, h},{0,-1,0},{1,1,1},{0,0}},
+        {{-h,-h, h},{0,-1,0},{1,1,1},{1,0}},
+    };
+
+    std::vector<GLuint> indices =
+    {
+        0,1,2, 0,2,3,
+        4,5,6, 4,6,7,
+        8,9,10, 8,10,11,
+        12,13,14, 12,14,15,
+        16,17,18, 16,18,19,
+        20,21,22, 20,22,23
+    };
+
+    return Mesh(vertices, indices);
+}
+
 void  Mesh::Draw(Shader &shader, Camera &camera){
     shader.Activate();
     VAO.Bind();
+
+    bool hasTex = textures.size() > 0;
+    glUniform1i(glGetUniformLocation(shader.ID, "hasTexture"), hasTex);
+
+    glUniform4f(glGetUniformLocation(shader.ID, "baseColorFactor"),
+                baseColorFactor.r,
+                baseColorFactor.g,
+                baseColorFactor.b,
+                baseColorFactor.a);
 
     unsigned int numDiffuse  = 0;
     unsigned int numSpecular = 0;
@@ -124,4 +189,3 @@ void Mesh::Draw_mesh(const glm::mat4 &model, Shader &shader, Camera &camera) {
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
     Draw(shader, camera);
 }
-    

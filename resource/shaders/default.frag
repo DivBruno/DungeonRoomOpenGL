@@ -5,8 +5,10 @@ out vec4 FragColor;
 
 in vec3 crnt_pos;
 in vec3 normal;
-in vec3 color; 
 in vec2 text_coord;
+
+uniform vec4 baseColorFactor;
+uniform bool hasTexture;
 
 uniform sampler2D diffuse0;
 uniform sampler2D specular0;
@@ -15,6 +17,10 @@ uniform vec4 light_color[MAX_LIGHTS];
 uniform vec3 light_pos[MAX_LIGHTS];
 uniform vec3 cam_pos;
 
+vec4 base_color(){
+   if (hasTexture) return texture(diffuse0, text_coord) * baseColorFactor;
+   else return baseColorFactor;
+}
 
 vec4 point_light(){
    vec3 Normal = normalize(normal);
@@ -41,7 +47,7 @@ vec4 point_light(){
       float spec_amount = pow(max(dot(view_direction, reflection_direction), 0.0f), 16);
       float specular = spec_amount * specular_light;
 
-      vec4 tex_diffuse = texture(diffuse0, text_coord);
+      vec4 tex_diffuse = base_color();
       float tex_spec = 0.5;
       // Antigo, não deu muito certo então parei de usar float tex_spec = texture(specular0, text_coord).r;
 
@@ -115,7 +121,8 @@ vec4 spot_light()
         float angle = dot(vec3(0.0, -1.0, 0.0), -light_direction);
         float intensity = clamp((angle - outer_cone) / (inner_cone - outer_cone), 0.0, 1.0);
 
-        vec4 tex_diffuse = texture(diffuse0, text_coord);
+        vec4 tex_diffuse = base_color();
+
         float tex_spec = 0.5; // mantendo seu padrão atual
 
         vec4 result =

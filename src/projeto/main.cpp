@@ -2,6 +2,8 @@
 #include "tiny_obj_loader.h"
 #include "table.h"
 #include "pokeball.h"
+#include "desk.h"
+#include "Model.h"
 
 template <size_t v, size_t i,  size_t t>
 
@@ -14,20 +16,16 @@ Mesh create_object(Vertex (&vertices)[v], GLuint (&indices)[i], Texture (&textur
     return mesh;
 }
 
-
 Mesh LoadOBJ(const std::string& path) {
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
     std::string warn, err;
 
-    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str(), nullptr, true);
-    if (!warn.empty() && warn.find("Material") == std::string::npos)
-        std::cout << "WARN: " << warn << std::endl;
-    if (!err.empty())
-        std::cerr << "ERR: " << err << std::endl;
-    if (!ret)
-        throw std::runtime_error("Failed to load OBJ");
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str());
+    if (!warn.empty()) std::cout << "WARN: " << warn << std::endl;
+    if (!err.empty()) std::cerr << "ERR: " << err << std::endl;
+    if (!ret) throw std::runtime_error("Failed to load OBJ");
 
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
@@ -64,7 +62,8 @@ Mesh LoadOBJ(const std::string& path) {
         }
     }
 
-    return Mesh(vertices, indices);
+    std::vector<Texture> empty_textures;
+    return Mesh(vertices, indices, empty_textures);
 }
 
 
@@ -150,7 +149,7 @@ Vertex vertices_rug_top[] = {
     Vertex{glm::vec3( rx,   ry, -rz), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 1.0f,  0.0f)}, 
     Vertex{glm::vec3(-rx,   ry, -rz), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3( 0.0f,  0.0f,  0.0f), glm::vec2( 0.0f,  0.0f)},
 };
-                            
+
 
 //      BOOKSHELF
 float x = 0.25, y = 1.6, z = 0.5;
@@ -243,6 +242,104 @@ GLuint indices[] = {
     22, 23, 20
 };
 
+//Cubo usado de base para a escrivaninha
+Vertex verticesCubo[] = {
+    //Frente
+    Vertex{glm::vec3(-0.5f,-0.5f, 0.5f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3( 0.5f,-0.5f, 0.5f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3( 0.5f, 0.5f, 0.5f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(0,1)},
+
+    //Trás
+    Vertex{glm::vec3( 0.5f,-0.5f,-0.5f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(-0.5f,-0.5f,-0.5f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3(-0.5f, 0.5f,-0.5f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3( 0.5f, 0.5f,-0.5f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(0,1)},
+
+    //Esquerda
+    Vertex{glm::vec3(-0.5f,-0.5f,-0.5f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(-0.5f,-0.5f, 0.5f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(-0.5f, 0.5f,-0.5f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+
+    //Direita
+    Vertex{glm::vec3(0.5f,-0.5f, 0.5f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(0.5f,-0.5f,-0.5f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3(0.5f, 0.5f,-0.5f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+
+    //Topo
+    Vertex{glm::vec3(-0.5f,0.5f, 0.5f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3( 0.5f,0.5f, 0.5f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3( 0.5f,0.5f,-0.5f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(-0.5f,0.5f,-0.5f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+
+    //Base
+    Vertex{glm::vec3(-0.5f,-0.5f,-0.5f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3( 0.5f,-0.5f,-0.5f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3( 0.5f,-0.5f, 0.5f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(-0.5f,-0.5f, 0.5f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+};
+
+GLuint indicesCubo[] = {
+
+    0,1,2, 2,3,0,       // frente
+    4,5,6, 6,7,4,       // trás
+    8,9,10, 10,11,8,    // esquerda
+    12,13,14, 14,15,12, // direita
+    16,17,18, 18,19,16, // topo
+    20,21,22, 22,23,20  // base
+};
+
+
+//Tronco de pirâmide usado para modelar partes da escrivaninha
+GLuint indicesTroncoP[] = {
+	0,1,2,	2,3,0,
+	4,5,6,	6,7,4,
+	8,9,10,	10,11,8,
+	12,13,14,	14,15,12,
+	16,17,18,	18,19,16,
+    20,21,22,   22,23,20
+};
+
+Vertex troncoPiramide[] = {
+    // PLACA DA FRENTE
+    Vertex{glm::vec3(0.015f, 0.015f,  0.01f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(-0.015f, 0.015f,  0.01f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(0,1)},
+    Vertex{glm::vec3(-0.015f, -0.015f,  0.01f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(0.015f, -0.015f,  0.01f), glm::vec3(0,0,1), glm::vec3(1,1,1), glm::vec2(1,0)},
+
+    //Placa tras
+    Vertex{glm::vec3(0.0225f, 0.0225f,  0.0f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(-0.0225f, 0.0225f,  0.0f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(0,1)},
+    Vertex{glm::vec3(-0.0225f, -0.0225f,  0.0f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(0.0225f, -0.0225f,  0.0f), glm::vec3(0,0,-1), glm::vec3(1,1,1), glm::vec2(1,0)},
+
+    // ESQUERDA
+    Vertex{glm::vec3(-0.015f, -0.015f, 0.01f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3(-0.015f, 0.015f, 0.01f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(-0.0225f, 0.0225f, 0.0f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+    Vertex{glm::vec3(-0.0225f, -0.0225f, 0.0f), glm::vec3(-1,0,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+ 	
+    // DIREITA
+    Vertex{glm::vec3(0.0151f, 0.015f, 0.01f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(1,0)},
+    Vertex{glm::vec3(0.015f, -0.015f, 0.01f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(0.0225f, -0.0225f, 0.0f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+    Vertex{glm::vec3(0.0225f, 0.0225f, 0.0f), glm::vec3(1,0,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+    
+	// BAIXO
+    Vertex{glm::vec3(0.015f, -0.015f, 0.01f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(-0.015f, -0.015f, 0.01f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+    Vertex{glm::vec3(-0.0225f, -0.0225f, 0.0f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(0.0225f, -0.0225f, 0.0f), glm::vec3(0,-1,0), glm::vec3(1,1,1), glm::vec2(1,0)},
+    
+	// CIMA
+    Vertex{glm::vec3(-0.015f, 0.015f, 0.01f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(0,0)},
+    Vertex{glm::vec3(0.015f, 0.015f, 0.01f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(0,1)},
+    Vertex{glm::vec3(0.0225f, 0.0225f, 0.0f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(1,1)},
+    Vertex{glm::vec3(-0.0225f, 0.0225f, 0.0f), glm::vec3(0,1,0), glm::vec3(1,1,1), glm::vec2(1,0)}
+};
+
 
 //      LIGHT
 Vertex light_vertices[] = {
@@ -297,48 +394,15 @@ int main(){
     gladLoadGL();
     glViewport(0, 0, w, h);
 
-    Texture branco("resource/textures/white.jpg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE);
-    Texture verde("resource/textures/green.jpg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE);
-
-    std::vector<Vertex> verts;
-    std::vector<GLuint> inds(indices, indices + sizeof(indices) / sizeof(GLuint));
-
-    for (int i = 0; i < 24; i++)
-        {
-        Vertex v;
-
-        v.position = glm::vec3(
-            vertices[i * 11 + 0],
-            vertices[i * 11 + 1],
-            vertices[i * 11 + 2]
-        );
-
-        v.color = glm::vec3(
-            vertices[i * 11 + 3],
-            vertices[i * 11 + 4],
-            vertices[i * 11 + 5]
-        );
-
-        v.texUV = glm::vec2(    
-            vertices[i * 11 + 6],
-            vertices[i * 11 + 7]
-        );
-
-        v.normal = glm::vec3(
-            vertices[i * 11 + 8],
-            vertices[i * 11 + 9],
-            vertices[i * 11 + 10]
-        );
-
-        verts.push_back(v);
-    }
 
 
     //  SHADERS
+
     Shader shader_program("resource/shaders/default.vert", "resource/shaders/default.frag");
     Shader light_shader("resource/shaders/light.vert", "resource/shaders/light.frag");
-
     Shader pokeballShader("resource/shaders/pokeball.vert", "resource/shaders/pokeball.frag");
+
+
 
     //  OBJECTS
 
@@ -349,11 +413,9 @@ int main(){
     };
     Mesh floor = create_object(vertices_floor, indices, texture_floor);
 
-
     //      WALL
     Texture texture_wall[] = { Texture ("resource/textures/wall.jpg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE) };
     Mesh wall = create_object(vertices_room, indices, texture_wall);
-
 
     //      BOOKSHELF
     Texture texture_bookshelf[] = { Texture ("resource/textures/book.jpg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE) };
@@ -365,7 +427,6 @@ int main(){
     Texture texture_bookshelf_side[] = { Texture ("resource/textures/book_side.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE) };
     Mesh bookshelf_side = create_object(vertices_bookshelf_side, indices, texture_bookshelf_side);
 
-
     //      RUG
     Texture texture_rug[] = { Texture ("resource/textures/rug.jpg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE) };
     Mesh rug = create_object(vertices_rug, indices, texture_rug);
@@ -375,39 +436,47 @@ int main(){
 
 
 
+    //      DESK
+    Texture deskTex("resource/textures/desk.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE);
+
+
+
+    //      WIDOW
+    Texture windowTexture("resource/textures/molduraTexture.jpeg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE);
+    Texture glassTexture("resource/textures/glassTexture.jpeg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE);
+
+    //      DOOR
+    Texture doorTexture("resource/textures/doorTexture.jpeg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE);
+
+    //      POKEBALL
     float x = 2.5, y = 0.8, z = -2.0;
     Pokeball pokeballCenter(glm::vec3(x +  0.0f,   y + -0.35f, z + 0.0f), 0.06f);
     Pokeball pokeballLeft(glm::vec3(  x + -0.45f,  y + -0.35f, z + 0.0f), 0.060f);
     Pokeball pokeballRight(glm::vec3( x +  0.45f,  y + -0.35f, z + 0.0f), 0.060f);
 
+    //      TABLE
+    Texture branco("resource/textures/white.jpg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE);
+    Texture verde("resource/textures/green.jpg", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE);
 
-
-
-    // ===== VETORES PARA A MESA =====
+    std::vector<Vertex> verts;
+    std::vector<GLuint> inds(indices, indices + sizeof(indices) / sizeof(GLuint));
+    for (int i = 0; i < 24; i++){
+        Vertex v;
+        v.position = glm::vec3(vertices[i * 11 + 0], vertices[i * 11 + 1], vertices[i * 11 + 2]);
+        v.color = glm::vec3(vertices[i * 11 + 3], vertices[i * 11 + 4], vertices[i * 11 + 5]);
+        v.texUV = glm::vec2(vertices[i * 11 + 6], vertices[i * 11 + 7]);
+        v.normal = glm::vec3(vertices[i * 11 + 8], vertices[i * 11 + 9], vertices[i * 11 + 10]);
+        verts.push_back(v);
+    }
+    
     std::vector<Texture> texBranco{ branco };
     std::vector<Texture> texVerde{ verde };
 
-    // reutilizando o mesmo quadrado (verts e inds)
     Mesh meshBranco(verts, inds, texBranco);
     Mesh meshVerde(verts, inds, texVerde);
+    Table table(glm::vec3(x, y, z), meshBranco, meshVerde);
 
-    // ===== CRIA TABLE =====
-    Table table(
-        glm::vec3(x, y, z),
-        meshBranco,
-        meshVerde
-    );
-
-
-
-
-    /*
-    //      IMPORTED MODEL
-    std::vector<Texture> modelTextures{ Texture("resource/textures/planks.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE) };
-    Mesh girl = LoadOBJ("resource/models/girl.obj");
-    girl.textures = modelTextures;
-    */
-
+    
 
     //      LIGHT
     std::vector <Vertex> light_verts(light_vertices, light_vertices + sizeof(light_vertices) / sizeof(Vertex));
@@ -416,16 +485,7 @@ int main(){
 
 
 
-
-
     //  OBJECTS ATTRIBUTES
-
-    /*
-    //      IMPORTED MODEL
-    glm::vec3 girl_pos = glm::vec3(0.8f, 0.0f, -0.5f);
-    glm::mat4 girl_model = glm::mat4(1.0f);
-    girl_model = glm::translate(girl_model, girl_pos);
-    */
 
     //      FLOOR
     glm::vec3 floor_pos = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -440,14 +500,14 @@ int main(){
 
 
     //      BOOKSHELVES
-    glm::vec3 bookshelf_pos_1 = glm::vec3(-3.45f, 0.001f, 1.0f);
-    glm::vec3 bookshelf_pos_2 = glm::vec3(-2.4f, 0.001f, 1.0f);
-    glm::vec3 bookshelf_pos_3 = glm::vec3(-1.35f, 0.001f, 1.0f);
-    glm::vec3 bookshelf_pos_4 = glm::vec3(3.45f, 0.001f, 1.0f);
-    glm::vec3 bookshelf_pos_5 = glm::vec3(2.4f, 0.001f, 1.0f);
-    glm::vec3 bookshelf_pos_6 = glm::vec3(1.35f, 0.001f, 1.0f);
+    glm::vec3 bookshelf_pos_1 = glm::vec3(-3.45f, 0.001f,  1.0f);
+    glm::vec3 bookshelf_pos_2 = glm::vec3(-2.4f,  0.001f,  1.0f);
+    glm::vec3 bookshelf_pos_3 = glm::vec3(-1.35f, 0.001f,  1.0f);
+    glm::vec3 bookshelf_pos_4 = glm::vec3( 3.45f, 0.001f,  1.0f);
+    glm::vec3 bookshelf_pos_5 = glm::vec3( 2.4f,  0.001f,  1.0f);
+    glm::vec3 bookshelf_pos_6 = glm::vec3( 1.35f, 0.001f,  1.0f);
     glm::vec3 bookshelf_pos_7 = glm::vec3(-3.45f, 0.001f, -4.74f);
-    glm::vec3 bookshelf_pos_8 = glm::vec3(3.45f, 0.001f, -4.74f);
+    glm::vec3 bookshelf_pos_8 = glm::vec3( 3.45f, 0.001f, -4.74f);
 
     glm::mat4 bookshelf_model_1 = glm::mat4(1.0f);
     bookshelf_model_1 = glm::translate(bookshelf_model_1, bookshelf_pos_1);
@@ -481,13 +541,75 @@ int main(){
     bookshelf_model_8 = glm::translate(bookshelf_model_8, bookshelf_pos_8);
     bookshelf_model_8 = glm::rotate(bookshelf_model_8, 1.57f, glm::vec3(0.0f, 1.0f, 0.0f));
 
-    
-
     //      RUG
-    glm::vec3 rug_pos = glm::vec3(0.18f, 0.001f, 4.8f);
+    glm::vec3 rug_pos = glm::vec3(0.0f, 0.001f, 4.8f);
     glm::mat4 rug_model = glm::mat4(1.0f);
     rug_model = glm::translate(rug_model, rug_pos);
     rug_model = glm::rotate(rug_model, 1.57f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+
+
+    //      POKEDEX
+    glm::vec3 poked_pos1 = glm::vec3(-0.6f, 0.75f, -4.6f);
+    glm::vec3 poked_pos2 = glm::vec3(-1.3f, 0.75f, -4.6f);
+    glm::vec3 poked_rotat1 = glm::vec3(0.0f, -45.0f, 90.0f);
+    glm::vec3 poked_rotat2 = glm::vec3(0.0f, -90.0f, 90.0f);
+    glm::vec3 poked_sca = glm::vec3(0.2f, 0.2f, 0.2f);
+    Model pokedex1("resource/models/pokedex/SegundaOpcao/scene.gltf", poked_pos1, poked_rotat1, poked_sca);
+    Model pokedex2("resource/models/pokedex/SegundaOpcao/scene.gltf", poked_pos2, poked_rotat2, poked_sca);
+
+    //      PLANTA
+    glm::vec3 plant_pos1 = glm::vec3( 1.4f, 0.0f, -4.5f);
+    glm::vec3 plant_pos2 = glm::vec3(-3.5f, 0.0f, 4.5f);
+    glm::vec3 plant_pos3 = glm::vec3( 3.5f, 0.0f, 4.5f);
+    Model planta1("resource/models/plant/scene.gltf", plant_pos1, glm::vec3(0), glm::vec3(0.192));
+    Model planta2("resource/models/plant/scene.gltf", plant_pos2, glm::vec3(0), glm::vec3(0.256));
+    Model planta3("resource/models/plant/scene.gltf", plant_pos3, glm::vec3(0), glm::vec3(0.256));
+
+    //      HEALER
+    Model healer("resource/models/healer/scene.gltf", glm::vec3(-3.35f, 0.0f, -2.0f), glm::vec3(0), glm::vec3(0.0256));
+
+    //      ESCRIVANINHA
+    std::vector<Texture> mesa{deskTex};
+    std::vector <Vertex> vertsCubo(verticesCubo, verticesCubo + sizeof(verticesCubo)/sizeof(Vertex));
+    std::vector <GLuint> indsCubo(indicesCubo, indicesCubo + sizeof(indicesCubo) /  sizeof(GLuint));
+    Mesh cubo(vertsCubo, indsCubo, mesa);
+
+    std::vector <Vertex> vertsTroncoP(troncoPiramide, troncoPiramide + sizeof(troncoPiramide)/sizeof(Vertex));
+    std::vector <GLuint> indsTroncoP(indicesTroncoP, indicesTroncoP + sizeof(indicesTroncoP)/sizeof(GLuint));
+    Mesh troncoPiramideM(vertsTroncoP, indsTroncoP, mesa);
+
+    Desk desk(&cubo, &troncoPiramideM, glm::vec3(-1.0f, 0.37f, -4.6f));
+
+
+
+    //      PORTA
+    Mesh door = Mesh::GenerateCube(1.0f);
+    door.textures = { doorTexture };
+    glm::vec3 door_pos = glm::vec3(0.0f, 0.9f, 5.0f);
+    glm::mat4 door_model = glm::mat4(1.0f);
+
+    door_model = glm::translate(door_model, door_pos);
+
+    door_model = glm::scale(door_model, glm::vec3(0.9f, 2.0f, 0.05f));
+
+    //      JANELA
+    std::vector<Texture> texWindow{ windowTexture };
+    Mesh windowFrame = Mesh::GenerateCube(1.0f);
+    windowFrame.textures = { windowTexture };
+    Mesh windowGlass = Mesh::GenerateCube(1.0f);
+    windowGlass.textures = { glassTexture }; 
+    glm::vec3 window_pos = glm::vec3(1.4f, 1.3f, -4.98f);
+
+    glm::mat4 windowFrame_model = glm::mat4(1.0f);
+    windowFrame_model = glm::translate(windowFrame_model, window_pos);
+    windowFrame_model = glm::scale(windowFrame_model, glm::vec3(0.8f, 1.0f, 0.02f));
+    glm::mat4 windowGlass_model = glm::mat4(1.0f);
+    windowGlass_model = glm::translate(windowGlass_model, window_pos + glm::vec3(0.0f, 0.0f, 0.01f));
+    windowGlass_model = glm::scale(windowGlass_model, glm::vec3(0.6f, 0.8f, 0.01f));
+
+
+
 
 
 
@@ -547,15 +669,8 @@ int main(){
         camera.Inputs(window, delta_time);
         camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
-
-        pokeballShader.Activate();
-
-        pokeballCenter.draw(pokeballShader,camera);
-        pokeballLeft.draw(pokeballShader,camera);
-        pokeballRight.draw(pokeballShader,camera);
-
-
         shader_program.Activate();
+        // Bookshelf
         bookshelf_draw(bookshelf, bookshelf_top, bookshelf_side, bookshelf_model_1, shader_program, camera);
         bookshelf_draw(bookshelf, bookshelf_top, bookshelf_side, bookshelf_model_2, shader_program, camera);
         bookshelf_draw(bookshelf, bookshelf_top, bookshelf_side, bookshelf_model_3, shader_program, camera);
@@ -565,14 +680,49 @@ int main(){
         bookshelf_draw(bookshelf, bookshelf_top, bookshelf_side, bookshelf_model_7, shader_program, camera);
         bookshelf_draw(bookshelf, bookshelf_top, bookshelf_side, bookshelf_model_8, shader_program, camera);
         
+        // Floor & Wall
         floor.Draw_mesh(floor_model, shader_program, camera);
         wall.Draw_mesh(wall_model, shader_program, camera);
 
+        // Tapete
         rug.Draw_mesh(rug_model, shader_program, camera);
         rug_top.Draw_mesh(rug_model, shader_program, camera);
 
+
+        // Pokedex
+        pokedex1.Draw(shader_program, camera);
+        pokedex2.Draw(shader_program, camera);
+
+        // Planta
+        planta1.Draw(shader_program, camera);
+        planta2.Draw(shader_program, camera);
+        planta3.Draw(shader_program, camera);
+
+        // Healer
+        healer.Draw(shader_program,  camera);
+
+        // Escrivaninha
+        desk.Draw(shader_program, camera);
         
+
+        // Tabela
         table.draw(shader_program, camera);
+
+        // Janela
+        windowFrame.Draw_mesh(windowFrame_model, shader_program, camera);
+        windowGlass.Draw_mesh(windowGlass_model, shader_program, camera);
+
+        // Porta
+        door.Draw_mesh(door_model, shader_program, camera);
+
+        // Pokebola
+        pokeballShader.Activate();
+
+        pokeballCenter.draw(pokeballShader,camera);
+        pokeballLeft.draw(pokeballShader,camera);
+        pokeballRight.draw(pokeballShader,camera);
+
+
 
         // Drawing multiples lights 
         light_shader.Activate();

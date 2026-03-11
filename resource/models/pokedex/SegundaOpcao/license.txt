@@ -1,0 +1,8 @@
+Model Information:
+* title:	Pokédex
+* source:	https://sketchfab.com/3d-models/pokedex-0ec4ebddf61149829c7a3031451290f1
+* author:	aidanwolf (https://sketchfab.com/aidanwolf)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works
